@@ -40,7 +40,7 @@ def calculate_taxes(salary):
     return details, net_income
 
 def main():
-    st.title("Tax Breakdown and Net Income Calculator")
+    st.title("Norwegian Income Tax Calculator 2024")
     
     # Input for salary
     salary = st.number_input("Enter your salary (NOK):")
@@ -82,9 +82,11 @@ def main():
                 xaxis={'categoryorder':'total descending'}
             )
             
+            fig.update_layout(
+                height=fig.layout.height * 1.33  # Increase plot height by 1/3
+            )
+            
             st.plotly_chart(fig)
 
 if __name__ == "__main__":
     main()
-
-

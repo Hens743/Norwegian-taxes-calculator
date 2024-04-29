@@ -1,42 +1,90 @@
 import streamlit as st
-import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 
-def calculate_tax(salary):
-    if salary <= 208050:
-        tax = 0
-    elif salary <= 292850:
-        tax = (salary - 208050) * 0.017
-    elif salary <= 670000:
-        tax = (292850 - 208051) * 0.017 + (salary - 292850) * 0.04
-    elif salary <= 937900:
-        tax = (292850 - 208051) * 0.017 + (670000 - 292851) * 0.04 + (salary - 670000) * 0.136
-    elif salary <= 1350000:
-        tax = (292850 - 208051) * 0.017 + (670000 - 292851) * 0.04 + (937900 - 670001) * 0.136 + (salary - 937900) * 0.166
-    else:
-        tax = (292850 - 208051) * 0.017 + (670000 - 292851) * 0.04 + (937900 - 670001) * 0.136 + (1350000 - 937901) * 0.166 + (salary - 1350000) * 0.176
-    net_income = salary - tax
-    return net_income, tax
+# Define the tax brackets and rates
+BRACKETS = [
+    (208050, 0.0),  # No tax for income up to 208050
+    (292850, 0.017),  # 1.7% for income between 208051 and 292850
+    (670000, 0.04),  # 4.0% for income between 292851 and 670000
+    (937900, 0.136),  # 13.6% for income between 670001 and 937900
+    (1350000, 0.166),  # 16.6% for income between 937901 and 1350000
+    (float('inf'), 0.176)  # 17.6% for income above 1350001
+]
+
+NATIONAL_INSURANCE_RATE = 0.078
+GENERAL_TAX_RATE = 0.22
+
+def calculate_taxes(salary):
+    details = []
+    bracket_tax = 0
+    last_bracket_max = 0
+    
+    for bracket in BRACKETS:
+        if salary > last_bracket_max:
+            upper_bound = min(salary, bracket[0])
+            taxable_income = upper_bound - last_bracket_max
+            tax = taxable_income * bracket[1]
+            details.append((f"Bracket Tax @ {bracket[1]*100:.1f}%", tax))
+            bracket_tax += tax
+            last_bracket_max = bracket[0]
+    
+    national_insurance = salary * NATIONAL_INSURANCE_RATE
+    details.append(("National Insurance", national_insurance))
+    
+    general_tax = salary * GENERAL_TAX_RATE
+    details.append(("General Tax", general_tax))
+    
+    total_tax = bracket_tax + national_insurance + general_tax
+    net_income = salary - total_tax
+    
+    return details, net_income
 
 def main():
-    st.title("Norway Tax Calculator")
-    salary = st.number_input("Enter your salary:", value=0.0)
-    if salary < 0:
-        st.warning("Salary must be a positive number.")
-        return
+    st.title("Tax Breakdown and Net Income Calculator")
+    
+    # Input for salary
+    salary = st.number_input("Enter your salary (NOK):")
+    
+    if st.button("Calculate"):
+        if salary <= 0:
+            st.error("Invalid input. Please enter a positive value for salary.")
+        else:
+            tax_details, net_income = calculate_taxes(salary)
+            
+            # Display tax breakdown
+            st.subheader("Tax Breakdown")
+            for detail, value in tax_details:
+                st.write(f"- {detail}: NOK {value:.2f}")
+            
+            # Display net income
+            st.subheader("Net Income")
+            st.write(f"Net income after tax: NOK {net_income:.2f}")
+            
+            # Visualization
+            fig = go.Figure()
+            labels = [label for label, _ in tax_details] + ['Net Income']
+            values = [value for _, value in tax_details] + [net_income]
+            colors = ['orange', 'red', 'yellow', 'green', 'purple', 'pink']  # Custom colors for each tax type
+            
+            for i, (label, value) in enumerate(zip(labels, values)):
+                fig.add_trace(go.Bar(
+                    x=[label],
+                    y=[value],
+                    name=label,
+                    marker_color=colors[i % len(colors)]
+                ))
 
-    net_income, tax = calculate_tax(salary)
-    st.write(f"Net income after tax: NOK {net_income:.2f}")
-    st.write(f"Tax paid: NOK {tax:.2f}")
-
-    # Visualization
-    labels = ['Income', 'Tax']
-    sizes = [salary, tax]
-    explode = (0, 0.1)  # only "explode" the 2nd slice
-    fig, ax = plt.subplots()
-    ax.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%', startangle=140)
-    ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-    st.pyplot(fig)
+            fig.update_layout(
+                barmode='stack',
+                title="Tax Breakdown and Net Income",
+                xaxis_title="Tax Components",
+                yaxis_title="Amount (NOK)",
+                xaxis={'categoryorder':'total descending'}
+            )
+            
+            st.plotly_chart(fig)
 
 if __name__ == "__main__":
     main()
+
 

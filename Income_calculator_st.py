@@ -61,6 +61,7 @@ def main():
             st.write(f"Net income after tax: NOK {net_income:.2f}")
             
             # Visualization
+            st.subheader("Tax Breakdown Visualization")
             fig = go.Figure()
             labels = [label for label, _ in tax_details] + ['Net Income']
             values = [value for _, value in tax_details] + [net_income]
@@ -79,11 +80,8 @@ def main():
                 title="Tax Breakdown and Net Income",
                 xaxis_title="Tax Components",
                 yaxis_title="Amount (NOK)",
-                xaxis={'categoryorder':'total descending'}
-            )
-            
-            fig.update_layout(
-                height=fig.layout.height * 1.33  # Increase plot height by 1/3
+                xaxis={'categoryorder':'total descending'},
+                height=600,  # Increased height for the plot
             )
             
             st.plotly_chart(fig)

@@ -37,7 +37,9 @@ def calculate_taxes(salary):
     total_tax = bracket_tax + national_insurance + general_tax
     net_income = salary - total_tax
     
-    return details, net_income
+    tax_percentage = (total_tax / salary) * 100
+    
+    return details, net_income, tax_percentage
 
 def main():
     st.title("Norwegian Income Tax Calculator 2024")
@@ -49,7 +51,7 @@ def main():
         if salary <= 0:
             st.error("Invalid input. Please enter a positive value for salary.")
         else:
-            tax_details, net_income = calculate_taxes(salary)
+            tax_details, net_income, tax_percentage = calculate_taxes(salary)
             
             # Display tax breakdown
             st.subheader("Tax Breakdown")
@@ -59,6 +61,10 @@ def main():
             # Display net income
             st.subheader("Net Income")
             st.write(f"Net income after tax: NOK {net_income:.2f}")
+            
+            # Display tax as a percentage of salary
+            st.subheader("Tax as Percentage of Salary")
+            st.write(f"Tax as a percentage of salary: {tax_percentage:.2f}%")
             
             # Visualization
             st.subheader("Tax Breakdown Visualization")

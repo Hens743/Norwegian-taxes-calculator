@@ -36,8 +36,8 @@ def calculate_taxes(salary):
     
     total_tax = bracket_tax + national_insurance + general_tax
     net_income = salary - total_tax
-    
-    return details, net_income
+      
+    return details, net_income, total_tax, (total_tax / salary) * 100  # Calculate tax as a percentage of salary
 
 def main():
     st.title("Norwegian Income Tax Calculator 2024")
@@ -85,6 +85,11 @@ def main():
             )
             
             st.plotly_chart(fig)
+    
+    st.markdown("""
+    ### Note:
+    The taxes are calculated based on the tables of Norway, income tax. For simplification purposes some variables (such as marital status, place of living and others) have been assumed. This document does not represent legal authority and shall be used for approximation purposes only.
+    """)
 
 if __name__ == "__main__":
     main()

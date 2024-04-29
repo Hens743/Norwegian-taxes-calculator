@@ -36,8 +36,8 @@ def calculate_taxes(salary):
     
     total_tax = bracket_tax + national_insurance + general_tax
     net_income = salary - total_tax
-      
-    return details, net_income, total_tax, (total_tax / salary) * 100  # Calculate tax as a percentage of salary
+    
+    return details, net_income
 
 def main():
     st.title("Norwegian Income Tax Calculator 2024")

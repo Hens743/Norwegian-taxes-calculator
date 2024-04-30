@@ -42,7 +42,7 @@ def calculate_taxes(salary):
     return details, net_income, tax_percentage
 
 def main():
-    st.title("Norwegian Income Tax Calculator 2024")
+    st.title("Norwegian income tax calculator 2024")
     
     # Input for salary
     salary = st.number_input("Enter your salary (NOK):")
@@ -59,15 +59,15 @@ def main():
                 st.write(f"- {detail}: NOK {value:.2f}")
             
             # Display net income
-            st.subheader("Net Income")
+            st.subheader("Net income")
             st.write(f"Net income after tax: NOK {net_income:.2f}")
             
             # Display tax as a percentage of salary
-            st.subheader("Tax as Percentage of Salary")
+            st.subheader("Tax as percentage of salary")
             st.write(f"Tax as a percentage of salary: {tax_percentage:.2f}%")
             
             # Visualization
-            st.subheader("Tax Breakdown Visualization")
+            st.subheader("Tax breakdown visualization")
             fig = go.Figure()
             labels = [label for label, _ in tax_details] + ['Net Income']
             values = [value for _, value in tax_details] + [net_income]
@@ -83,34 +83,19 @@ def main():
 
             fig.update_layout(
                 barmode='stack',
-                title="Tax Breakdown and Net Income",
-                xaxis_title="Tax Components",
+                title="Tax breakdown and net income",
+                xaxis_title="Tax components",
                 yaxis_title="Amount (NOK)",
                 xaxis={'categoryorder':'total descending'},
                 height=600,  # Increased height for the plot
             )
             
             st.plotly_chart(fig)
-            
-            # Download option
-            download_text = "Tax Breakdown and Net Income:\n\n"
-            download_text += "Tax Breakdown:\n"
-            for detail, value in tax_details:
-                download_text += f"- {detail}: NOK {value:.2f}\n"
-            download_text += f"\nNet income after tax: NOK {net_income:.2f}\n"
-            download_text += f"Tax as a percentage of salary: {tax_percentage:.2f}%\n"
-            
-            st.markdown(get_download_link(download_text, "Tax_Breakdown_Net_Income.txt"), unsafe_allow_html=True)
     
     st.markdown("""
     ### Note:
-    The taxes are calculated based on the tables of Norway, income tax. For simplification purposes some variables (such as marital status, place of living and others) have been assumed. This document does not represent legal authority and shall be used for approximation purposes only.
+    The taxes are calculated based on the tables of Norway, income tax. For simplification purposes some variables (such as marital status, place of living and others) have been assumed. This app does not represent legal authority and shall be used for approximation purposes only.
     """)
-
-def get_download_link(content, filename):
-    """Generate a download link for a given string."""
-    href = f'<a href="data:text/plain;charset=utf-8,{content}" download="{filename}">Download {filename}</a>'
-    return href
 
 if __name__ == "__main__":
     main()

@@ -1,5 +1,6 @@
 import streamlit as st
 import plotly.graph_objects as go
+import pandas as pd
 
 # Define the tax brackets and rates
 BRACKETS = [
@@ -42,7 +43,7 @@ def calculate_taxes(salary):
     return details, net_income, tax_percentage
 
 def main():
-    st.title("Norwegian income tax calculator 2024")
+    st.title("Norwegian Income Tax Calculator 2024")
     
     # Input for salary
     salary = st.number_input("Enter your salary (NOK):")
@@ -59,15 +60,15 @@ def main():
                 st.write(f"- {detail}: NOK {value:.2f}")
             
             # Display net income
-            st.subheader("Net income")
+            st.subheader("Net Income")
             st.write(f"Net income after tax: NOK {net_income:.2f}")
             
             # Display tax as a percentage of salary
-            st.subheader("Tax as percentage of salary")
+            st.subheader("Tax as Percentage of Salary")
             st.write(f"Tax as a percentage of salary: {tax_percentage:.2f}%")
             
             # Visualization
-            st.subheader("Tax breakdown visualization")
+            st.subheader("Tax Breakdown Visualization")
             fig = go.Figure()
             labels = [label for label, _ in tax_details] + ['Net Income']
             values = [value for _, value in tax_details] + [net_income]
@@ -83,19 +84,34 @@ def main():
 
             fig.update_layout(
                 barmode='stack',
-                title="Tax breakdown and net income",
-                xaxis_title="Tax components",
+                title="Tax Breakdown and Net Income",
+                xaxis_title="Tax Components",
                 yaxis_title="Amount (NOK)",
                 xaxis={'categoryorder':'total descending'},
                 height=600,  # Increased height for the plot
             )
             
             st.plotly_chart(fig)
+            
+            # Create DataFrame for Excel file
+            data = {'Component': [label for label, _ in tax_details] + ['Net Income'],
+                    'Amount (NOK)': [value for _, value in tax_details] + [net_income]}
+            df = pd.DataFrame(data)
+            
+            # Download option for Excel file
+            st.markdown(get_table_download_link(df), unsafe_allow_html=True)
     
     st.markdown("""
     ### Note:
-    The taxes are calculated based on the tables of Norway, income tax. For simplification purposes some variables (such as marital status, place of living and others) have been assumed. This app does not represent legal authority and shall be used for approximation purposes only.
+    The taxes are calculated based on the tables of Norway, income tax. For simplification purposes some variables (such as marital status, place of living and others) have been assumed. This document does not represent legal authority and shall be used for approximation purposes only.
     """)
+
+def get_table_download_link(df):
+    """Generates a link allowing the data in a given pandas DataFrame to be downloaded as an Excel file."""
+    excel_file = df.to_excel(index=False)
+    b64 = base64.b64encode(excel_file.encode()).decode()  # Convert DataFrame to bytes
+    href = f'<a href="data:file/excel;base64,{b64}" download="tax_breakdown.xlsx">Download Excel file</a>'
+    return href
 
 if __name__ == "__main__":
     main()

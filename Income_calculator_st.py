@@ -1,6 +1,5 @@
 import streamlit as st
 import plotly.graph_objects as go
-import pandas as pd
 
 # Define the tax brackets and rates
 BRACKETS = [
@@ -93,24 +92,24 @@ def main():
             
             st.plotly_chart(fig)
             
-            # Create DataFrame for Excel file
-            data = {'Component': [label for label, _ in tax_details] + ['Net Income'],
-                    'Amount (NOK)': [value for _, value in tax_details] + [net_income]}
-            df = pd.DataFrame(data)
+            # Download option
+            download_text = "Tax Breakdown and Net Income:\n\n"
+            download_text += "Tax Breakdown:\n"
+            for detail, value in tax_details:
+                download_text += f"- {detail}: NOK {value:.2f}\n"
+            download_text += f"\nNet income after tax: NOK {net_income:.2f}\n"
+            download_text += f"Tax as a percentage of salary: {tax_percentage:.2f}%\n"
             
-            # Download option for Excel file
-            st.markdown(get_table_download_link(df), unsafe_allow_html=True)
+            st.markdown(get_download_link(download_text, "Tax_Breakdown_Net_Income.txt"), unsafe_allow_html=True)
     
     st.markdown("""
     ### Note:
     The taxes are calculated based on the tables of Norway, income tax. For simplification purposes some variables (such as marital status, place of living and others) have been assumed. This document does not represent legal authority and shall be used for approximation purposes only.
     """)
 
-def get_table_download_link(df):
-    """Generates a link allowing the data in a given pandas DataFrame to be downloaded as an Excel file."""
-    excel_file = df.to_excel(index=False)
-    b64 = base64.b64encode(excel_file.encode()).decode()  # Convert DataFrame to bytes
-    href = f'<a href="data:file/excel;base64,{b64}" download="tax_breakdown.xlsx">Download Excel file</a>'
+def get_download_link(content, filename):
+    """Generate a download link for a given string."""
+    href = f'<a href="data:text/plain;charset=utf-8,{content}" download="{filename}">Download {filename}</a>'
     return href
 
 if __name__ == "__main__":

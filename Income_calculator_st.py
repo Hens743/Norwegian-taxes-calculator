@@ -65,9 +65,31 @@ def main():
             st.subheader("Tax as Percentage of Salary")
             st.write(f"Tax as a percentage of salary: {tax_percentage:.2f}%")
 
-            # Visualization - Insert your Plotly Code here using the 'df' DataFrame
-            st.subheader("Tax Breakdown Visualization") 
-            # ... 
+            # Visualization
+            st.subheader("Tax breakdown visualization")
+            fig = go.Figure()
+            labels = [label for label, _ in tax_details] + ['Net Income']
+            values = [value for _, value in tax_details] + [net_income]
+            colors = ['orange', 'red', 'yellow', 'green', 'purple', 'pink']  # Custom colors for each tax type
+            
+            for i, (label, value) in enumerate(zip(labels, values)):
+                fig.add_trace(go.Bar(
+                    x=[label],
+                    y=[value],
+                    name=label,
+                    marker_color=colors[i % len(colors)]
+                ))
+
+            fig.update_layout(
+                barmode='stack',
+                title="Tax breakdown and net income",
+                xaxis_title="Tax components",
+                yaxis_title="Amount (NOK)",
+                xaxis={'categoryorder':'total descending'},
+                height=600,  # Increased height for the plot
+            )
+            
+            st.plotly_chart(fig)
 
             # CSV Download
             csv = df.to_csv(index=False)

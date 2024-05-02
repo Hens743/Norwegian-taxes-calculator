@@ -59,6 +59,9 @@ def main():
             for detail, value in zip(df['Tax Components'], df['Amount (NOK)']):
                 st.write(f"- {detail}: NOK {value:.2f}" if detail != 'Net Income' else f"- {detail}: NOK {value:.2f}")
 
+            # Display total tax percentage
+            st.write(f"- Total Tax Percentage: {tax_percentage:.2f}%")
+
             # Visualization
             st.subheader("Tax breakdown visualization")
             fig = go.Figure()
@@ -94,7 +97,7 @@ def main():
                 mime='text/csv'
             )
 
-            st.markdown(""" Note:  The taxes are calculated based on the tables of Norway, income tax. For simplification purposes some variables (such as marital status, place of living and others) have been assumed. This app does not represent legal authority and shall be used for approximation purposes only.
+            st.markdown(""" ### Note:  The taxes are calculated based on the tables of Norway, income tax. For simplification purposes some variables (such as marital status, place of living and others) have been assumed. This app does not represent legal authority and shall be used for approximation purposes only.
  """) 
 
 if __name__ == "__main__":

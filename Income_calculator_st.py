@@ -56,7 +56,7 @@ def main():
             df, net_income, tax_percentage = calculate_taxes(salary)
 
             st.subheader("Tax Breakdown")
-            for detail, value in df.itertuples(index=False):
+            for detail, value in zip(df['Tax Components'], df['Amount (NOK)']):
                 st.write(f"- {detail}: NOK {value:.2f}")
 
             st.subheader("Net Income")
@@ -68,8 +68,8 @@ def main():
             # Visualization
             st.subheader("Tax breakdown visualization")
             fig = go.Figure()
-            labels = [label for label, _ in df] + ['Net Income']
-            values = [value for _, value in df] + [net_income]
+            labels = df['Tax Components'].tolist() + ['Net Income']
+            values = df['Amount (NOK)'].tolist() + [net_income]
             colors = ['orange', 'red', 'yellow', 'green', 'purple', 'pink']  # Custom colors for each tax type
             
             for i, (label, value) in enumerate(zip(labels, values)):

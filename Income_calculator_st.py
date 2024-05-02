@@ -1,5 +1,6 @@
 import streamlit as st
 import plotly.graph_objects as go
+import pandas as pd
 
 # Define the tax brackets and rates
 BRACKETS = [
@@ -39,7 +40,12 @@ def calculate_taxes(salary):
     
     tax_percentage = (total_tax / salary) * 100
     
-    return details, net_income, tax_percentage
+    # Create DataFrame for CSV Export
+    data = {'Tax Components': [label for label, _ in details] + ['Net Income'],
+            'Amount (NOK)': [value for _, value in details] + [net_income]}
+    df = pd.DataFrame(data)
+
+    return df, net_income, tax_percentage
 
 def main():
     st.title("Norwegian income tax calculator 2024")
@@ -91,6 +97,15 @@ def main():
             )
             
             st.plotly_chart(fig)
+
+            # CSV Download
+            csv = df.to_csv(index=False)
+            st.download_button(
+                label="Download Results as CSV",
+                data=csv,
+                file_name='tax_results.csv',
+                mime='text/csv'
+            )
     
     st.markdown("""
     ### Note:

@@ -68,8 +68,8 @@ def main():
             # Visualization
             st.subheader("Tax breakdown visualization")
             fig = go.Figure()
-            labels = [label for label, _ in tax_details] + ['Net Income']
-            values = [value for _, value in tax_details] + [net_income]
+            labels = [label for label, _ in df] + ['Net Income']
+            values = [value for _, value in df] + [net_income]
             colors = ['orange', 'red', 'yellow', 'green', 'purple', 'pink']  # Custom colors for each tax type
             
             for i, (label, value) in enumerate(zip(labels, values)):

@@ -57,19 +57,13 @@ def main():
 
             st.subheader("Tax Breakdown")
             for detail, value in zip(df['Tax Components'], df['Amount (NOK)']):
-                st.write(f"- {detail}: NOK {value:.2f}")
-
-            st.subheader("Net Income")
-            st.write(f"Net income after tax: NOK {net_income:.2f}")
-
-            st.subheader("Tax as Percentage of Salary")
-            st.write(f"Tax as a percentage of salary: {tax_percentage:.2f}%")
+                st.write(f"- {detail}: NOK {value:.2f}" if detail != 'Net Income' else f"- {detail}: NOK {value:.2f}")
 
             # Visualization
             st.subheader("Tax breakdown visualization")
             fig = go.Figure()
-            labels = df['Tax Components'].tolist() + ['Net Income']
-            values = df['Amount (NOK)'].tolist() + [net_income]
+            labels = df['Tax Components'].tolist()
+            values = df['Amount (NOK)'].tolist()
             colors = ['orange', 'red', 'yellow', 'green', 'purple', 'pink']  # Custom colors for each tax type
             
             for i, (label, value) in enumerate(zip(labels, values)):

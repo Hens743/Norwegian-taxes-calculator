@@ -20,13 +20,14 @@ def calculate_taxes(salary):
     last_bracket_max = 0
 
     for bracket in BRACKETS:
-        if salary > last_bracket_max:
-            upper_bound = min(salary, bracket[0])
-            taxable_income = upper_bound - last_bracket_max
-            tax = taxable_income * bracket[1]
-            details.append((f"Bracket Tax @ {bracket[1]*100:.1f}%", tax))
-            bracket_tax += tax
-            last_bracket_max = bracket[0]
+        if bracket[1] > 0:  # Exclude tax brackets with a tax rate of 0.0%
+            if salary > last_bracket_max:
+                upper_bound = min(salary, bracket[0])
+                taxable_income = upper_bound - last_bracket_max
+                tax = taxable_income * bracket[1]
+                details.append((f"Bracket Tax @ {bracket[1]*100:.1f}%", tax))
+                bracket_tax += tax
+                last_bracket_max = bracket[0]
 
     national_insurance = salary * NATIONAL_INSURANCE_RATE
     details.append(("National Insurance", national_insurance))

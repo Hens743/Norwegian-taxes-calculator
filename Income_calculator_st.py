@@ -63,9 +63,8 @@ def main():
 
             # Display total tax percentage
             st.write(f"- Total Tax Percentage: {tax_percentage:.2f}%")
-
+            st.text(" ")
             # Visualization
-
             st.subheader("Tax breakdown and net income visualization")
             fig = go.Figure()
             labels = df['Tax Components'].tolist()

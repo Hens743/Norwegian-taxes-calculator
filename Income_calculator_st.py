@@ -20,13 +20,15 @@ def calculate_taxes(salary):
     last_bracket_max = 0
 
     for bracket in BRACKETS:
-        if salary > last_bracket_max:
-            upper_bound = min(salary, bracket[0])
-            taxable_income = upper_bound - last_bracket_max
-            tax = taxable_income * bracket[1]
-            details.append((f"Bracket Tax @ {bracket[1]*100:.1f}%", tax))
-            bracket_tax += tax
-            last_bracket_max = bracket[0]
+        # Skip tax brackets with a tax rate of 0.0%
+        if bracket[1] > 0:
+            if salary > last_bracket_max:
+                upper_bound = min(salary, bracket[0])
+                taxable_income = upper_bound - last_bracket_max
+                tax = taxable_income * bracket[1]
+                details.append((f"Bracket Tax @ {bracket[1]*100:.1f}%", tax))
+                bracket_tax += tax
+                last_bracket_max = bracket[0]
 
     national_insurance = salary * NATIONAL_INSURANCE_RATE
     details.append(("National Insurance", national_insurance))
@@ -54,16 +56,16 @@ def main():
             st.error("Invalid input. Please enter a positive value for salary.")
         else:
             df, net_income, tax_percentage = calculate_taxes(salary)
-
-            st.subheader("Tax Breakdown")
+            st.text(" ")
+            st.subheader("Tax breakdown")
             for detail, value in zip(df['Tax Components'], df['Amount (NOK)']):
                 st.write(f"- {detail}: NOK {value:.2f}" if detail != 'Net Income' else f"- {detail}: NOK {value:.2f}")
 
             # Display total tax percentage
             st.write(f"- Total Tax Percentage: {tax_percentage:.2f}%")
-
+            st.text(" ")
             # Visualization
-            st.subheader("Tax breakdown visualization")
+            st.subheader("Tax breakdown and net income visualization")
             fig = go.Figure()
             labels = df['Tax Components'].tolist()
             values = df['Amount (NOK)'].tolist()
@@ -79,7 +81,6 @@ def main():
 
             fig.update_layout(
                 barmode='stack',
-                title="Tax breakdown and net income",
                 xaxis_title="Tax components",
                 yaxis_title="Amount (NOK)",
                 xaxis={'categoryorder':'total descending'},
@@ -87,7 +88,7 @@ def main():
             )
             
             st.plotly_chart(fig)
-
+            st.text(" ")
             # CSV Download
             csv = df.to_csv(index=False)
             st.download_button(
@@ -97,7 +98,7 @@ def main():
                 mime='text/csv'
             )
 
-            st.markdown(""" Note:  The taxes are calculated based on the tables of Norway, income tax. For simplification purposes some variables (such as marital status, place of living and others) have been assumed. This app does not represent legal authority and shall be used for approximation purposes only.
+            st.markdown(""" Note:  The taxes are calculated based on the tables of Norway income tax. For simplification purposes some variables (such as marital status, place of living and others) have been assumed. This app does not represent legal authority and shall be used for approximation purposes only.
  """) 
 
 if __name__ == "__main__":

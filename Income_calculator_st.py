@@ -88,7 +88,7 @@ def main():
             )
             
             st.plotly_chart(fig)
-
+            st.text(" ")
             # CSV Download
             csv = df.to_csv(index=False)
             st.download_button(

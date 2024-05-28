@@ -56,7 +56,7 @@ def main():
             st.error("Invalid input. Please enter a positive value for salary.")
         else:
             df, net_income, tax_percentage = calculate_taxes(salary)
-
+            st.text(" ")
             st.subheader("Tax breakdown")
             for detail, value in zip(df['Tax Components'], df['Amount (NOK)']):
                 st.write(f"- {detail}: NOK {value:.2f}" if detail != 'Net Income' else f"- {detail}: NOK {value:.2f}")

@@ -57,7 +57,7 @@ def main():
         else:
             df, net_income, tax_percentage = calculate_taxes(salary)
 
-            st.subheader("Tax Breakdown")
+            st.subheader("Tax breakdown")
             for detail, value in zip(df['Tax Components'], df['Amount (NOK)']):
                 st.write(f"- {detail}: NOK {value:.2f}" if detail != 'Net Income' else f"- {detail}: NOK {value:.2f}")
 
@@ -65,7 +65,8 @@ def main():
             st.write(f"- Total Tax Percentage: {tax_percentage:.2f}%")
 
             # Visualization
-            st.subheader("Tax breakdown visualization")
+            st.text(" ")
+            st.subheader("Tax breakdown and net income visualization")
             fig = go.Figure()
             labels = df['Tax Components'].tolist()
             values = df['Amount (NOK)'].tolist()
@@ -81,7 +82,6 @@ def main():
 
             fig.update_layout(
                 barmode='stack',
-                title="Tax breakdown and net income",
                 xaxis_title="Tax components",
                 yaxis_title="Amount (NOK)",
                 xaxis={'categoryorder':'total descending'},
